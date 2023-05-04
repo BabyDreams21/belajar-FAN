@@ -7,14 +7,18 @@ import android.widget.Toast
 import com.androidnetworking.AndroidNetworking
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
+import com.androidnetworking.interfaces.JSONArrayRequestListener
 import com.androidnetworking.interfaces.JSONObjectRequestListener
 import com.example.belajarfan.databinding.ActivityGetBinding
+import com.example.belajarfan.databinding.ListItemGetBinding
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
 
 class Get : AppCompatActivity() {
     private lateinit var binding: ActivityGetBinding
+    private lateinit var binding1: ListItemGetBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,37 +52,49 @@ class Get : AppCompatActivity() {
     }*/
 
 
+
     private fun getData() {
-        AndroidNetworking.get("https://10.10.0.3:45456/api/dosens/1")
+
+
+        AndroidNetworking.get("https://10.0.105.145:45458/api/dosens/1")
             .setPriority(Priority.LOW)
             .build()
-            .getAsJSONObject(object: JSONObjectRequestListener
+            .getAsJSONArray( object :JSONArrayRequestListener
             {
 
-                override fun onResponse (response : JSONObject){
+                override fun onResponse (response : JSONArray){
 
                     Log.e("_kotlinResponseBerhasil", response.toString())
-                    try {
-                        val jsonArray = response.getJSONArray("result")
-                        for (i in 0 until jsonArray.length()) {
+
+                       // val jsonArray = response.getJSONArray("result")
+                        for (i in 0 until response.length()) {
+                            try {
+
+
+                                binding1.txtID.setText(response.getString(0))
+                                binding1.txtNama.setText(response.getString(1))
+                                binding1.txtTelepon.setText(response.getString(2))
+1
+                            } catch(e: JSONException) {
+
+                            }
+
 
                         }
 
-
-                        binding.txtID.setText(response.getString("name"))
-                        binding.txtNama.setText(response.getString("nid"))
-                        binding.txtTelepon.setText(response.getString("nid"))
-
-                    }catch(e: JSONException){
-                        e.printStackTrace()
-                    }
                 }
 
-                override fun onError(anError: ANError?) {
+                override fun onError(e: ANError) {
+                    Log.d("ErrorAwal",""+e.getErrorBody());
                     Toast.makeText(applicationContext, "Data gagal disimpan", Toast.LENGTH_SHORT).show()
                 }
 
             })
+
+    }
+
+    private val data: Unit private get() {
+
 
     }
 }
